@@ -1,21 +1,24 @@
 package com.gnd.parking.Repositories;
 
 import com.gnd.parking.Contracts.UsersRepositoryInterface;
+import com.gnd.parking.EntityManagers.ParkingEntityManager;
 import com.gnd.parking.Models.User;
 
+import javax.ejb.EJB;
 import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import java.util.ArrayList;
+import javax.ejb.Singleton;
 import java.util.List;
 
-@Stateless
+@Singleton
 @Remote(UsersRepositoryInterface.class)
 public class UsersRepository implements UsersRepositoryInterface {
+    @EJB
+    ParkingEntityManager em;
+
     @Override
     public List<User> all() {
-        List<User> users = new ArrayList<>();
-        users.add(new User());
-
-        return users;
+        return em.get()
+            .createQuery("SELECT u FROM User u")
+            .getResultList();
     }
 }
