@@ -44,7 +44,7 @@
     <modules>
         <module>parking-api</module>
         <module>parking-implementation</module>
-        <module>web-service</module>
+        <module>rest-web-service</module>
     </modules>
 
     <dependencies>
