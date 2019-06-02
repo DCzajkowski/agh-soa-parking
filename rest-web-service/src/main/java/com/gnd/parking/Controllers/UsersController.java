@@ -3,10 +3,13 @@ package com.gnd.parking.Controllers;
 import com.gnd.parking.Contracts.UsersRepositoryInterface;
 
 import javax.ejb.EJB;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.List;
+
+import com.gnd.parking.Exceptions.NestedObjectNotFoundException;
+import com.gnd.parking.Models.User;
 
 @Path("users")
 public class UsersController {
@@ -14,8 +17,59 @@ public class UsersController {
     UsersRepositoryInterface usersRepository;
 
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String index() {
-        return "Hello, World! - " + usersRepository.all().size();
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response index() {
+        List<User> users = usersRepository.all();
+        return Response.ok(users).build();
+    }
+
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response show(@PathParam("id") int id) {
+        User user = usersRepository.find(id);
+
+        if (user == null) {
+            return Response.status(404).build();
+        }
+
+        return Response.ok(user).build();
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(User sourceUser) {
+        try {
+            User updatedUser = usersRepository.create(sourceUser);
+            return Response.ok(updatedUser).build();
+        } catch (NestedObjectNotFoundException e) {
+            return Response.status(404).entity(e.getMessage()).build();
+        }
+    }
+
+    @DELETE
+    @Path("/{id}")
+    public Response delete(@PathParam("id") int id) {
+        usersRepository.delete(id);
+        return Response.ok().build();
+    }
+
+    @PATCH
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(@PathParam("id") int id, User sourceUser) {
+        User targetUser = usersRepository.find(id);
+        if (targetUser == null) {
+            return Response.status(404).build();
+        }
+        sourceUser.setId(id);
+        try {
+            User updatedUser = usersRepository.update(sourceUser);
+            return Response.ok(updatedUser).build();
+        } catch (NestedObjectNotFoundException e) {
+            return Response.status(404).entity(e.getMessage()).build();
+        }
     }
 }

@@ -45,6 +45,7 @@
         <module>parking-api</module>
         <module>parking-implementation</module>
         <module>rest-web-service</module>
+        <module>soap-web-service</module>
     </modules>
 
     <dependencies>
