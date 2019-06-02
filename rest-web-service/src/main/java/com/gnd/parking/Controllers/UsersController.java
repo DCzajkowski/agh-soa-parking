@@ -39,10 +39,10 @@ public class UsersController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(User sourceUser) {
+    public Response create(User sourceUser) {
         try {
-            User updatedUser = usersRepository.create(sourceUser);
-            return Response.ok(updatedUser).build();
+            User createdUser = usersRepository.create(sourceUser);
+            return Response.ok(createdUser).build();
         } catch (NestedObjectNotFoundException e) {
             return Response.status(404).entity(e.getMessage()).build();
         }

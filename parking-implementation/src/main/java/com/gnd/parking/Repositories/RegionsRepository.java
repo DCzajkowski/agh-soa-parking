@@ -28,6 +28,16 @@ public class RegionsRepository implements RegionsRepositoryInterface {
     }
 
     @Override
+    public Boolean delete(Integer id) {
+        Region region = find(id);
+        if (region != null) {
+            em.get().remove(region);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public Region save(Region region) {
         em.get().getTransaction().begin();
         em.get().persist(region);
@@ -38,9 +48,21 @@ public class RegionsRepository implements RegionsRepositoryInterface {
     @Override
     public Region update(Region sourceRegion) {
         Region targetRegion = find(sourceRegion.getId());
+        clone(targetRegion, sourceRegion);
+        return save(targetRegion);
+    }
+
+    @Override
+    public Region create(Region sourceRegion) {
+        Region region = new Region();
+        clone(region, sourceRegion);
+        return save(region);
+    }
+
+    private Region clone(Region targetRegion, Region sourceRegion) {
         if (sourceRegion.getDescription() != null) {
             targetRegion.setDescription(sourceRegion.getDescription());
         }
-        return save(targetRegion);
+        return targetRegion;
     }
 }

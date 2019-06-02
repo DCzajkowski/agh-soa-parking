@@ -6,8 +6,10 @@ import java.util.List;
 public interface RegionsRepositoryInterface {
     List<Region> all();
     Region find(Integer id);
+    Boolean delete(Integer id);
     Region update(Region sourceRegion);
-    Region save(Region user);
+    Region create(Region sourceRegion);
+    Region save(Region region);
 }
 
 
