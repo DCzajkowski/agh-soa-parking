@@ -16,6 +16,11 @@ public class Region implements Serializable {
     @Column(name = "description", nullable = false)
     private String description;
 
+    public Region() {
+        this.id = 0;
+        this.description = "";
+    }
+
     @JsonGetter("id")
     public int getId() {
         return id;
