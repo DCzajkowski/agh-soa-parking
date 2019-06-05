@@ -26,12 +26,13 @@ public class User implements Serializable {
     @JoinColumn(name = "region_id")
     private Region region;
 
-    public User(){
+    public User() {
         this.id = 0;
         this.username = "";
         this.password = "";
         this.role = Role.EMPLOYEE;
     }
+
     @JsonGetter("id")
     public int getId() {
         return id;
