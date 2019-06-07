@@ -1,4 +1,4 @@
-package com.gnd.parking.Contracts;
+package com.gnd.parking.Contracts.Repositories;
 
 import com.gnd.parking.Models.Region;
 import java.util.List;

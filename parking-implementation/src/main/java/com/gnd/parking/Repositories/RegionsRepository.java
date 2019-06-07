@@ -1,6 +1,6 @@
 package com.gnd.parking.Repositories;
 
-import com.gnd.parking.Contracts.RegionsRepositoryInterface;
+import com.gnd.parking.Contracts.Repositories.RegionsRepositoryInterface;
 import com.gnd.parking.EntityManagers.ParkingEntityManager;
 import com.gnd.parking.Models.Region;
 

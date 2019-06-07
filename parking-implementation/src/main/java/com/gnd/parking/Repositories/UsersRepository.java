@@ -1,7 +1,7 @@
 package com.gnd.parking.Repositories;
 
-import com.gnd.parking.Contracts.RegionsRepositoryInterface;
-import com.gnd.parking.Contracts.UsersRepositoryInterface;
+import com.gnd.parking.Contracts.Repositories.RegionsRepositoryInterface;
+import com.gnd.parking.Contracts.Repositories.UsersRepositoryInterface;
 import com.gnd.parking.EntityManagers.ParkingEntityManager;
 import com.gnd.parking.Exceptions.NestedObjectNotFoundException;
 import com.gnd.parking.Models.Region;
