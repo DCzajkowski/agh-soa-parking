@@ -18,12 +18,12 @@ public class RegionsRepository implements RegionsRepositoryInterface {
     @Override
     public List<Region> all() {
         return em.get()
-                .createQuery("SELECT r FROM Region r")
-                .getResultList();
+            .createQuery("SELECT r FROM Region r")
+            .getResultList();
     }
 
     @Override
-    public  Region find(Integer id) {
+    public Region find(Integer id) {
         return em.get().find(Region.class, id);
     }
 

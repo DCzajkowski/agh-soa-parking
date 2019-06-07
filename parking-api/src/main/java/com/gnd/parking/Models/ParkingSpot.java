@@ -3,7 +3,6 @@ package com.gnd.parking.Models;
 import com.fasterxml.jackson.annotation.JsonGetter;
 
 import javax.persistence.*;
-import javax.ws.rs.DefaultValue;
 import java.io.Serializable;
 
 @Entity
@@ -21,7 +20,7 @@ public class ParkingSpot implements Serializable {
     @Column(name = "is_occupied")
     private Boolean isOccupied;
 
-    public ParkingSpot(){
+    public ParkingSpot() {
         this.id = 0;
         this.isOccupied = false;
         this.region = null;
