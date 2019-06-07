@@ -29,7 +29,7 @@ public class UsersRepository implements UsersRepositoryInterface {
     }
 
     @Override
-    public  User find(Integer id) {
+    public User find(Integer id) {
         return em.get().find(User.class, id);
     }
 
@@ -65,13 +65,13 @@ public class UsersRepository implements UsersRepositoryInterface {
         return save(targetUser);
     }
 
-     private User clone(User targetUser, User sourceUser) throws NestedObjectNotFoundException {
+    private User clone(User targetUser, User sourceUser) throws NestedObjectNotFoundException {
         if (sourceUser.getPassword() != null) {
             targetUser.setPassword(sourceUser.getPassword());
         }
         if (sourceUser.getRegion() != null) {
             Integer sourceRegionId = sourceUser.getRegion().getId();
-            if (sourceRegionId != 0){
+            if (sourceRegionId != 0) {
                 Region newRegion = regionsRepository.find(sourceRegionId);
                 if (newRegion == null) {
                     throw new NestedObjectNotFoundException("Region not found");
