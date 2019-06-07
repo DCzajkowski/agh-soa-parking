@@ -1,10 +1,10 @@
 package com.gnd.parking.Repositories;
 
-import com.gnd.parking.Contracts.ParkingSpotsRepositoryInterface;
-import com.gnd.parking.Contracts.TicketsRepositoryInterface;
-import com.gnd.parking.Models.ParkingSpot;
+import com.gnd.parking.Contracts.Repositories.ParkingSpotsRepositoryInterface;
+import com.gnd.parking.Contracts.Repositories.TicketsRepositoryInterface;
 import com.gnd.parking.EntityManagers.ParkingEntityManager;
 import com.gnd.parking.Exceptions.NestedObjectNotFoundException;
+import com.gnd.parking.Models.ParkingSpot;
 import com.gnd.parking.Models.Ticket;
 
 import javax.ejb.EJB;
@@ -24,12 +24,12 @@ public class TicketsRepository implements TicketsRepositoryInterface {
     @Override
     public List<Ticket> all() {
         return em.get()
-                .createQuery("SELECT t FROM Ticket t")
-                .getResultList();
+            .createQuery("SELECT t FROM Ticket t")
+            .getResultList();
     }
 
     @Override
-    public  Ticket find(Integer id) {
+    public Ticket find(Integer id) {
         return em.get().find(Ticket.class, id);
     }
 
@@ -75,7 +75,7 @@ public class TicketsRepository implements TicketsRepositoryInterface {
 
         if (sourceTicket.getParkingSpot() != null) {
             Integer sourceParkingSpotId = sourceTicket.getParkingSpot().getId();
-            if (sourceParkingSpotId != 0){
+            if (sourceParkingSpotId != 0) {
                 ParkingSpot newParkingSpot = parkingSpotsRepository.find(sourceParkingSpotId);
                 if (newParkingSpot == null) {
                     throw new NestedObjectNotFoundException("ParkingSpot not found");

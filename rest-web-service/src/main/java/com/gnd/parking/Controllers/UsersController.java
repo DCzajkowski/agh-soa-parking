@@ -1,15 +1,14 @@
 package com.gnd.parking.Controllers;
 
-import com.gnd.parking.Contracts.UsersRepositoryInterface;
+import com.gnd.parking.Contracts.Repositories.UsersRepositoryInterface;
+import com.gnd.parking.Exceptions.NestedObjectNotFoundException;
+import com.gnd.parking.Models.User;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
-
-import com.gnd.parking.Exceptions.NestedObjectNotFoundException;
-import com.gnd.parking.Models.User;
 
 @Path("users")
 public class UsersController {

@@ -1,7 +1,7 @@
 package com.gnd.parking.Repositories;
 
-import com.gnd.parking.Contracts.ParkingSpotsRepositoryInterface;
-import com.gnd.parking.Contracts.RegionsRepositoryInterface;
+import com.gnd.parking.Contracts.Repositories.ParkingSpotsRepositoryInterface;
+import com.gnd.parking.Contracts.Repositories.RegionsRepositoryInterface;
 import com.gnd.parking.EntityManagers.ParkingEntityManager;
 import com.gnd.parking.Exceptions.NestedObjectNotFoundException;
 import com.gnd.parking.Models.ParkingSpot;
@@ -24,8 +24,8 @@ public class ParkingSpotsRepository implements ParkingSpotsRepositoryInterface {
     @Override
     public List<ParkingSpot> all() {
         return em.get()
-                .createQuery("SELECT p FROM ParkingSpot p")
-                .getResultList();
+            .createQuery("SELECT p FROM ParkingSpot p")
+            .getResultList();
     }
 
     @Override
@@ -69,7 +69,7 @@ public class ParkingSpotsRepository implements ParkingSpotsRepositoryInterface {
     private ParkingSpot clone(ParkingSpot targetParkingSpot, ParkingSpot sourceParkingSpot) throws NestedObjectNotFoundException {
         if (sourceParkingSpot.getRegion() != null) {
             Integer sourceRegionId = sourceParkingSpot.getRegion().getId();
-            if (sourceRegionId != 0){
+            if (sourceRegionId != 0) {
                 Region newRegion = regionsRepository.find(sourceRegionId);
                 if (newRegion == null) {
                     throw new NestedObjectNotFoundException("Region not found");
@@ -79,7 +79,7 @@ public class ParkingSpotsRepository implements ParkingSpotsRepositoryInterface {
                 targetParkingSpot.setRegion(null);
             }
         }
-        if (sourceParkingSpot.isOccupied() != null){
+        if (sourceParkingSpot.isOccupied() != null) {
             targetParkingSpot.setOccupied(sourceParkingSpot.isOccupied());
         }
         return targetParkingSpot;
