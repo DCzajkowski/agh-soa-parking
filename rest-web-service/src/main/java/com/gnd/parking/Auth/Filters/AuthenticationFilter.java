@@ -1,9 +1,10 @@
 package com.gnd.parking.Auth.Filters;
 
 import com.gnd.parking.Auth.Annotations.Secured;
+import com.gnd.parking.Auth.Exceptions.TokenValidationException;
+import com.gnd.parking.Auth.Models.Token;
 import com.gnd.parking.Auth.SecurityContext;
 import com.gnd.parking.Auth.TokenManager;
-import com.gnd.parking.Models.Role;
 
 import javax.annotation.Priority;
 import javax.inject.Inject;
@@ -36,17 +37,13 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             return;
         }
 
-        String token = authorizationHeader.substring(AUTHENTICATION_SCHEME.length()).trim();
+        String stringToken = authorizationHeader.substring(AUTHENTICATION_SCHEME.length()).trim();
 
         try {
-            tokenManager.validateToken(token);
+            Token token = tokenManager.validateToken(stringToken);
 
-            String username = tokenManager.retrieveUsernameFromToken(token);
-            Role role = tokenManager.retrieveRoleFromToken(token);
-
-            securityContext.initialize(username, role);
-        } catch (Exception e) {
-            e.printStackTrace();
+            securityContext.initialize(token.getUsername(), token.getRole());
+        } catch (TokenValidationException e) {
             abortWithUnauthorized(requestContext);
         }
     }

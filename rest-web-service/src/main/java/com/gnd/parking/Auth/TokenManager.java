@@ -1,6 +1,10 @@
 package com.gnd.parking.Auth;
 
-import com.gnd.parking.Models.Role;
+import com.gnd.parking.Auth.Exceptions.TokenHasExpiredException;
+import com.gnd.parking.Auth.Exceptions.TokenIssueException;
+import com.gnd.parking.Auth.Exceptions.TokenSignatureVerificationException;
+import com.gnd.parking.Auth.Exceptions.TokenValidationException;
+import com.gnd.parking.Auth.Models.Token;
 import com.gnd.parking.Models.User;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -26,7 +30,7 @@ public class TokenManager {
         signer = new MACSigner(key);
     }
 
-    public String issueToken(User user) throws JOSEException {
+    public String issueToken(User user) throws TokenIssueException {
         Date now = new Date();
 
         JWTClaimsSet claims = new JWTClaimsSet.Builder()
@@ -40,34 +44,36 @@ public class TokenManager {
 
         SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
 
-        signedJWT.sign(signer);
+        try {
+            signedJWT.sign(signer);
+        } catch (JOSEException e) {
+            throw new TokenIssueException("There was a problem with signing of the token");
+        }
 
         return signedJWT.serialize();
     }
 
-    public void validateToken(String stringToken) throws JOSEException, ParseException {
-        SignedJWT token = SignedJWT.parse(stringToken);
-        MACVerifier verifier = new MACVerifier(key.getBytes());
+    public Token validateToken(String stringToken) throws TokenValidationException {
+        try {
+            SignedJWT token = SignedJWT.parse(stringToken);
+            MACVerifier verifier = new MACVerifier(key.getBytes());
 
-        if (!token.verify(verifier)) {
-            throw new JOSEException("Wrong token signature.");
+            if (!token.verify(verifier)) {
+                throw new TokenSignatureVerificationException();
+            }
+
+            Date referenceTime = new Date();
+            JWTClaimsSet claims = token.getJWTClaimsSet();
+
+            Date expirationTime = claims.getExpirationTime();
+
+            if (expirationTime == null || expirationTime.before(referenceTime)) {
+                throw new TokenHasExpiredException();
+            }
+
+            return new Token(token);
+        } catch (JOSEException | ParseException e) {
+            throw new TokenValidationException(e.getMessage());
         }
-
-        Date referenceTime = new Date();
-        JWTClaimsSet claims = token.getJWTClaimsSet();
-
-        Date expirationTime = claims.getExpirationTime();
-
-        if (expirationTime == null || expirationTime.before(referenceTime)) {
-            throw new JOSEException("The token has expired.");
-        }
-    }
-
-    public String retrieveUsernameFromToken(String token) throws ParseException {
-        return SignedJWT.parse(token).getJWTClaimsSet().getSubject();
-    }
-
-    public Role retrieveRoleFromToken(String token) throws ParseException {
-        return Role.valueOf((String) SignedJWT.parse(token).getJWTClaimsSet().getClaim("role"));
     }
 }
