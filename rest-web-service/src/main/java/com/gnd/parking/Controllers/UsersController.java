@@ -1,6 +1,6 @@
 package com.gnd.parking.Controllers;
 
-import com.gnd.parking.Contracts.UsersRepositoryInterface;
+import com.gnd.parking.Contracts.Repositories.UsersRepositoryInterface;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;

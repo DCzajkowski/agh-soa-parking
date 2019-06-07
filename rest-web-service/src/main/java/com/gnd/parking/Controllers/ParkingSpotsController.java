@@ -1,6 +1,6 @@
 package com.gnd.parking.Controllers;
 
-import com.gnd.parking.Contracts.ParkingSpotsRepositoryInterface;
+import com.gnd.parking.Contracts.Repositories.ParkingSpotsRepositoryInterface;
 import com.gnd.parking.Exceptions.NestedObjectNotFoundException;
 import com.gnd.parking.Models.ParkingSpot;
 

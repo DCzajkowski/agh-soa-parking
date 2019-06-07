@@ -1,6 +1,6 @@
 package com.gnd.parking.Controllers;
 
-import com.gnd.parking.Contracts.RegionsRepositoryInterface;
+import com.gnd.parking.Contracts.Repositories.RegionsRepositoryInterface;
 import com.gnd.parking.Models.Region;
 
 import javax.ejb.EJB;
