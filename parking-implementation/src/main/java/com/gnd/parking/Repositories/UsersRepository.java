@@ -34,6 +34,17 @@ public class UsersRepository implements UsersRepositoryInterface {
     }
 
     @Override
+    public User find(String username) {
+        return (User) em.get()
+            .createQuery("SELECT u FROM User u WHERE u.username = :username")
+            .setParameter("username", username)
+            .getResultList()
+            .stream()
+            .findFirst()
+            .orElse(null);
+    }
+
+    @Override
     public Boolean delete(Integer id) {
         User user = find(id);
         if (user != null) {
