@@ -1,19 +1,23 @@
 package com.gnd.parking.Auth.Filters;
 
 import com.gnd.parking.Auth.Annotations.Secured;
+import com.gnd.parking.Auth.Exceptions.TokenParseException;
 import com.gnd.parking.Auth.Exceptions.TokenValidationException;
 import com.gnd.parking.Auth.Models.Token;
-import com.gnd.parking.Auth.SecurityContext;
 import com.gnd.parking.Auth.TokenManager;
+import com.gnd.parking.Models.Role;
 
 import javax.annotation.Priority;
 import javax.inject.Inject;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.Provider;
+import java.security.Principal;
 
 @Secured
 @Provider
@@ -25,7 +29,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     @Inject
     TokenManager tokenManager;
 
-    @Inject
+    @Context
     SecurityContext securityContext;
 
     @Override
@@ -41,8 +45,39 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
         try {
             Token token = tokenManager.validateToken(stringToken);
+            String username;
+            Role role;
 
-            securityContext.initialize(token.getUsername(), token.getRole());
+            try {
+                username = token.getUsername();
+                role = token.getRole();
+            } catch (TokenParseException e) {
+                throw new RuntimeException(e);
+            }
+
+            final SecurityContext currentSecurityContext = requestContext.getSecurityContext();
+
+            requestContext.setSecurityContext(new SecurityContext() {
+                @Override
+                public Principal getUserPrincipal() {
+                    return () -> username;
+                }
+
+                @Override
+                public boolean isUserInRole(String role_) {
+                    return role.toString().equals(role_);
+                }
+
+                @Override
+                public boolean isSecure() {
+                    return currentSecurityContext.isSecure();
+                }
+
+                @Override
+                public String getAuthenticationScheme() {
+                    return AUTHENTICATION_SCHEME;
+                }
+            });
         } catch (TokenValidationException e) {
             abortWithUnauthorized(requestContext);
         }
