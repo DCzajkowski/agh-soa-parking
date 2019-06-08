@@ -21,6 +21,8 @@ public class NotificationSenderService implements NotificationSenderServiceInter
     @Override
     public void sendNotification(String message, Integer parkingSpotId, Integer regionId) {
         JMSProducer producer = context.createProducer();
+        producer.setProperty("parkingSpotId", parkingSpotId);
+        producer.setProperty("regionId", regionId);
         producer.send(queue, message);
     }
 }

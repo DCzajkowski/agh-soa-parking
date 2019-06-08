@@ -6,5 +6,6 @@ import javax.jms.JMSException;
 import java.util.List;
 
 public interface NotificationReceiverServiceInterface {
-    List<String> receiveNotifications(User user) throws JMSException;
+    List<String> receiveNotificationsForRegion(Integer regionId) throws JMSException;
+    List<String> receiveNotifications() throws JMSException;
 }

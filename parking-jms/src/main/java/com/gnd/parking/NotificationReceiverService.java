@@ -23,13 +23,21 @@ public class NotificationReceiverService implements NotificationReceiverServiceI
     Queue queue;
 
     @Override
-    public List<String> receiveNotifications(User user) throws JMSException {
+    public List<String> receiveNotificationsForRegion(Integer regionId) throws JMSException {
+        JMSConsumer consumer = context.createConsumer(queue, "regionId =" + regionId);
+        return getMessages(consumer);
+    }
+
+    @Override
+    public List<String> receiveNotifications() throws JMSException {
         JMSConsumer consumer = context.createConsumer(queue);
+        return getMessages(consumer);
+    }
 
+    private List<String> getMessages(JMSConsumer consumer) throws JMSException {
         List<String> messages = new ArrayList<>();
-
         Message message;
-        while ((message = consumer.receiveNoWait()) != null){
+        while ((message = consumer.receiveNoWait()) != null) {
             TextMessage textMessage = (TextMessage) message;
             messages.add(textMessage.getText());
         }
