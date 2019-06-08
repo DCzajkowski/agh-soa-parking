@@ -34,6 +34,10 @@ public class ParkingSpotsController {
         } else {
             Token token = (Token) securityContext.getUserPrincipal();
 
+            if (token.getRegionId() == null) {
+                throw new RuntimeException("This user is not associated with any region.");
+            }
+
             parkingSpots = parkingSpotsRepository.allForRegion(token.getRegionId());
         }
 
