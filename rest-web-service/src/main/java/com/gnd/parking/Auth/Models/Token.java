@@ -1,5 +1,6 @@
 package com.gnd.parking.Auth.Models;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.gnd.parking.Auth.Exceptions.TokenParseException;
 import com.gnd.parking.Models.Role;
 import com.nimbusds.jwt.SignedJWT;
@@ -14,6 +15,7 @@ public class Token implements Principal {
         this.token = token;
     }
 
+    @JsonGetter("role")
     public Role getRole() {
         try {
             return Role.valueOf((String) token.getJWTClaimsSet().getClaim("role"));
@@ -22,6 +24,7 @@ public class Token implements Principal {
         }
     }
 
+    @JsonGetter("region_id")
     public int getRegionId() {
         try {
             return (int) token.getJWTClaimsSet().getClaim("region_id");
@@ -31,6 +34,7 @@ public class Token implements Principal {
     }
 
     @Override
+    @JsonGetter("username")
     public String getName() {
         try {
             return token.getJWTClaimsSet().getSubject();
