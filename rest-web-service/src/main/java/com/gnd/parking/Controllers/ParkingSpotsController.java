@@ -1,25 +1,42 @@
 package com.gnd.parking.Controllers;
 
+import com.gnd.parking.Auth.Annotations.Secured;
+import com.gnd.parking.Auth.Models.Token;
 import com.gnd.parking.Contracts.Repositories.ParkingSpotsRepositoryInterface;
 import com.gnd.parking.Exceptions.NestedObjectNotFoundException;
 import com.gnd.parking.Models.ParkingSpot;
+import com.gnd.parking.Models.Role;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
-
+@Secured
 @Path("parking_spots")
 public class ParkingSpotsController {
     @EJB(lookup = "java:global/parking-implementation-1.0/ParkingSpotsRepository")
     ParkingSpotsRepositoryInterface parkingSpotsRepository;
 
+    @Context
+    SecurityContext securityContext;
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response index() {
-        List<ParkingSpot> parkingSpots = parkingSpotsRepository.all();
+        List<ParkingSpot> parkingSpots;
+
+        if (securityContext.isUserInRole(Role.ADMIN.toString())) {
+            parkingSpots = parkingSpotsRepository.all();
+        } else {
+            Token token = (Token) securityContext.getUserPrincipal();
+
+            parkingSpots = parkingSpotsRepository.allForRegion(token.getRegionId());
+        }
+
         return Response.ok(parkingSpots).build();
     }
 

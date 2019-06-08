@@ -45,27 +45,18 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
         try {
             Token token = tokenManager.validateToken(stringToken);
-            String username;
-            Role role;
-
-            try {
-                username = token.getUsername();
-                role = token.getRole();
-            } catch (TokenParseException e) {
-                throw new RuntimeException(e);
-            }
 
             final SecurityContext currentSecurityContext = requestContext.getSecurityContext();
 
             requestContext.setSecurityContext(new SecurityContext() {
                 @Override
-                public Principal getUserPrincipal() {
-                    return () -> username;
+                public Token getUserPrincipal() {
+                    return token;
                 }
 
                 @Override
                 public boolean isUserInRole(String role_) {
-                    return role.toString().equals(role_);
+                    return getUserPrincipal().getRole().toString().equals(role_);
                 }
 
                 @Override

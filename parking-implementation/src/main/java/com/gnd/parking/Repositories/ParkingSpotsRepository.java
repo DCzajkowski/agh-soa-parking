@@ -29,6 +29,14 @@ public class ParkingSpotsRepository implements ParkingSpotsRepositoryInterface {
     }
 
     @Override
+    public List<ParkingSpot> allForRegion(int regionId) {
+        return em.get()
+            .createQuery("SELECT p FROM ParkingSpot p WHERE p.region.id = :regionId")
+            .setParameter("regionId", regionId)
+            .getResultList();
+    }
+
+    @Override
     public ParkingSpot find(Integer id) {
         return em.get().find(ParkingSpot.class, id);
     }

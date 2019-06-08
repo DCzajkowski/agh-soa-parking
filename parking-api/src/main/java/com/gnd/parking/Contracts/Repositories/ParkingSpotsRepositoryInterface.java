@@ -2,11 +2,14 @@ package com.gnd.parking.Contracts.Repositories;
 
 import com.gnd.parking.Exceptions.NestedObjectNotFoundException;
 import com.gnd.parking.Models.ParkingSpot;
+import com.gnd.parking.Models.Region;
 
 import java.util.List;
 
 public interface ParkingSpotsRepositoryInterface {
     List<ParkingSpot> all();
+
+    List<ParkingSpot> allForRegion(int regionId);
 
     ParkingSpot find(Integer id);
 
