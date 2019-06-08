@@ -1,6 +1,5 @@
 package com.gnd.parking;
 
-
 import com.gnd.parking.Contracts.Services.ParkingSpots.Exceptions.ParkingSpotException;
 import com.gnd.parking.Contracts.Services.ParkingSpots.ParkingSpotReleaserServiceInterface;
 import com.gnd.parking.Contracts.Services.ParkingSpots.ParkingSpotTakerServiceInterface;
