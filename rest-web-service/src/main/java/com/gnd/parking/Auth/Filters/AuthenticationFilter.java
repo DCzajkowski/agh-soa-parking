@@ -1,11 +1,9 @@
 package com.gnd.parking.Auth.Filters;
 
 import com.gnd.parking.Auth.Annotations.Secured;
-import com.gnd.parking.Auth.Exceptions.TokenParseException;
 import com.gnd.parking.Auth.Exceptions.TokenValidationException;
 import com.gnd.parking.Auth.Models.Token;
 import com.gnd.parking.Auth.TokenManager;
-import com.gnd.parking.Models.Role;
 
 import javax.annotation.Priority;
 import javax.inject.Inject;
@@ -17,7 +15,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.Provider;
-import java.security.Principal;
 
 @Secured
 @Provider
