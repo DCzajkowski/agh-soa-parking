@@ -25,9 +25,9 @@ public class Token implements Principal {
     }
 
     @JsonGetter("region_id")
-    public int getRegionId() {
+    public Integer getRegionId() {
         try {
-            return (int) token.getJWTClaimsSet().getClaim("region_id");
+            return (Integer) token.getJWTClaimsSet().getClaim("region_id");
         } catch (ParseException e) {
             throw new TokenParseException();
         }

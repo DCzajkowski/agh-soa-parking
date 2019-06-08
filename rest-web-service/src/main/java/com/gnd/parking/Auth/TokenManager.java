@@ -37,7 +37,7 @@ public class TokenManager {
             .subject(user.getUsername())
             .issuer(ISSUER)
             .claim("role", user.getRole())
-            .claim("region_id", user.getRegion().getId())
+            .claim("region_id", user.getRegion() != null ? user.getRegion().getId() : null)
             .expirationTime(new Date(now.getTime() + EXPIRATION_TIME))
             .notBeforeTime(now)
             .issueTime(now)
