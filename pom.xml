@@ -16,6 +16,7 @@
         <module>parking-implementation</module>
         <module>parking-jms</module>
         <module>parking-jobs</module>
+        <module>parking-logic</module>
         <module>rest-web-service</module>
         <module>soap-web-service</module>
     </modules>

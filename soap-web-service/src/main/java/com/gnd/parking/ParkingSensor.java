@@ -11,10 +11,10 @@ import javax.jws.WebService;
 @WebService
 public class ParkingSensor {
 
-    @EJB(lookup = "java:global/parking-implementation-1.0/ParkingSpotTakerService")
+    @EJB(lookup = "java:global/parking-logic-1.0/ParkingSpotTakerService")
     ParkingSpotTakerServiceInterface parkingSpotTaker;
 
-    @EJB(lookup = "java:global/parking-implementation-1.0/ParkingSpotReleaserService")
+    @EJB(lookup = "java:global/parking-logic-1.0/ParkingSpotReleaserService")
     ParkingSpotReleaserServiceInterface parkingSpotReleaser;
 
     @WebMethod
