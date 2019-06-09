@@ -1,11 +1,10 @@
 package com.gnd.parking.Auth.Filters;
 
 import com.gnd.parking.Auth.Annotations.Secured;
-import com.gnd.parking.Auth.Exceptions.TokenParseException;
 import com.gnd.parking.Auth.Exceptions.TokenValidationException;
 import com.gnd.parking.Auth.Models.Token;
 import com.gnd.parking.Auth.TokenManager;
-import com.gnd.parking.Models.Role;
+import com.gnd.parking.Responses.ErrorResponse;
 
 import javax.annotation.Priority;
 import javax.inject.Inject;
@@ -17,7 +16,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.Provider;
-import java.security.Principal;
 
 @Secured
 @Provider
@@ -45,27 +43,18 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
         try {
             Token token = tokenManager.validateToken(stringToken);
-            String username;
-            Role role;
-
-            try {
-                username = token.getUsername();
-                role = token.getRole();
-            } catch (TokenParseException e) {
-                throw new RuntimeException(e);
-            }
 
             final SecurityContext currentSecurityContext = requestContext.getSecurityContext();
 
             requestContext.setSecurityContext(new SecurityContext() {
                 @Override
-                public Principal getUserPrincipal() {
-                    return () -> username;
+                public Token getUserPrincipal() {
+                    return token;
                 }
 
                 @Override
                 public boolean isUserInRole(String role_) {
-                    return role.toString().equals(role_);
+                    return getUserPrincipal().getRole().toString().equals(role_);
                 }
 
                 @Override
@@ -83,28 +72,20 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         }
     }
 
-    /**
-     * Check if the Authorization header is valid
-     * It must not be null and must be prefixed with "Bearer" plus a whitespace
-     * The authentication scheme comparison must be case-insensitive
-     */
     private boolean isTokenBasedAuthentication(String authorizationHeader) {
         return authorizationHeader != null
             && authorizationHeader.toLowerCase().startsWith(AUTHENTICATION_SCHEME.toLowerCase() + " ");
     }
 
-    /**
-     * Abort the filter chain with a 401 status code response
-     * The WWW-Authenticate header is sent along with the response
-     */
     private void abortWithUnauthorized(ContainerRequestContext requestContext) {
-        requestContext.abortWith(
-            Response.status(Response.Status.UNAUTHORIZED)
-                .header(
-                    HttpHeaders.WWW_AUTHENTICATE,
-                    String.format("%s realm=\"%s\"", AUTHENTICATION_SCHEME, REALM)
-                )
-                .build()
-        );
+        Response response = Response.status(Response.Status.UNAUTHORIZED)
+            .header(
+                HttpHeaders.WWW_AUTHENTICATE,
+                String.format("%s realm=\"%s\"", AUTHENTICATION_SCHEME, REALM)
+            )
+            .entity(new ErrorResponse("You must be authenticated to access this resource."))
+            .build();
+
+        requestContext.abortWith(response);
     }
 }

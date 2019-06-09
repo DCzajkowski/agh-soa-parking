@@ -3,6 +3,7 @@ package com.gnd.parking.Auth.Filters;
 import com.gnd.parking.Auth.Annotations.Secured;
 import com.gnd.parking.Auth.Exceptions.LackingPermissionException;
 import com.gnd.parking.Models.Role;
+import com.gnd.parking.Responses.ErrorResponse;
 
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
@@ -31,13 +32,9 @@ public class AuthorizationFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) {
-        // Get the resource class which matches with the requested URL
-        // Extract the roles declared by it
         Class<?> resourceClass = resourceInfo.getResourceClass();
         List<Role> classRoles = extractRoles(resourceClass);
 
-        // Get the resource method which matches with the requested URL
-        // Extract the roles declared by it
         Method resourceMethod = resourceInfo.getResourceMethod();
         List<Role> methodRoles = extractRoles(resourceMethod);
 
@@ -48,7 +45,11 @@ public class AuthorizationFilter implements ContainerRequestFilter {
                 checkPermissions(methodRoles);
             }
         } catch (LackingPermissionException e) {
-            requestContext.abortWith(Response.status(Response.Status.FORBIDDEN).build());
+            Response response = Response.status(Response.Status.FORBIDDEN)
+                .entity(new ErrorResponse("You do not have permission to access this resource"))
+                .build();
+
+            requestContext.abortWith(response);
         }
     }
 

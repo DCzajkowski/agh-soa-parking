@@ -1,4 +1,4 @@
-package com.gnd.parking.Controllers;
+package com.gnd.parking.Controllers.Auth;
 
 import com.gnd.parking.Auth.Exceptions.TokenIssueException;
 import com.gnd.parking.Auth.TokenManager;

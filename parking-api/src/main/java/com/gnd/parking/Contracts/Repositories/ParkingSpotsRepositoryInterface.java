@@ -8,6 +8,8 @@ import java.util.List;
 public interface ParkingSpotsRepositoryInterface {
     List<ParkingSpot> all();
 
+    List<ParkingSpot> allForRegion(int regionId);
+
     ParkingSpot find(Integer id);
 
     Boolean delete(Integer id);
