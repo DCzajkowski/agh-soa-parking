@@ -36,6 +36,7 @@ public class TokenManager {
         JWTClaimsSet claims = new JWTClaimsSet.Builder()
             .subject(user.getUsername())
             .issuer(ISSUER)
+            .claim("id", user.getId())
             .claim("role", user.getRole())
             .claim("region_id", user.getRegion() != null ? user.getRegion().getId() : null)
             .expirationTime(new Date(now.getTime() + EXPIRATION_TIME))

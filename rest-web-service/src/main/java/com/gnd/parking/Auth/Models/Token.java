@@ -15,6 +15,21 @@ public class Token implements Principal {
         this.token = token;
     }
 
+    private Integer getInteger(String claim) {
+        try {
+            Long value = (Long) token.getJWTClaimsSet().getClaim(claim);
+
+            return value != null ? value.intValue() : null;
+        } catch (ParseException e) {
+            throw new TokenParseException();
+        }
+    }
+
+    @JsonGetter("id")
+    public Integer getId() {
+        return getInteger("id");
+    }
+
     @JsonGetter("role")
     public Role getRole() {
         try {
@@ -26,11 +41,7 @@ public class Token implements Principal {
 
     @JsonGetter("region_id")
     public Integer getRegionId() {
-        try {
-            return (Integer) token.getJWTClaimsSet().getClaim("region_id");
-        } catch (ParseException e) {
-            throw new TokenParseException();
-        }
+        return getInteger("region_id");
     }
 
     @Override
