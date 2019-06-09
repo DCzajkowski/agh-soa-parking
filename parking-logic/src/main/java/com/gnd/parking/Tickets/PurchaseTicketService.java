@@ -4,6 +4,7 @@ import com.gnd.parking.Contracts.Jobs.CheckTicketJobInterface;
 import com.gnd.parking.Contracts.Jobs.EndTicketJobInterface;
 import com.gnd.parking.Contracts.Repositories.ParkingSpotsRepositoryInterface;
 import com.gnd.parking.Contracts.Repositories.TicketsRepositoryInterface;
+import com.gnd.parking.Contracts.Services.JMS.NotificationCleanerServiceInterface;
 import com.gnd.parking.Contracts.Services.Scheduling.ParkingSchedulerServiceInterface;
 import com.gnd.parking.Contracts.Services.Tickets.PurchaseTicketRequestInterface;
 import com.gnd.parking.Contracts.Services.Tickets.PurchaseTicketServiceInterface;
@@ -33,6 +34,9 @@ public class PurchaseTicketService implements PurchaseTicketServiceInterface{
 
     @EJB(lookup = "java:global/parking-jobs-1.0/ParkingSchedulerService")
     ParkingSchedulerServiceInterface parkingSchedulerService;
+
+    @EJB(lookup = "java:global/parking-jms-1.0/NotificationCleanerService")
+    NotificationCleanerServiceInterface notificationCleanerService;
 
     @Override
     public void purchaseTicket(Date validTo, Integer parkingSpotId) throws TicketPurchaseException {
@@ -64,6 +68,7 @@ public class PurchaseTicketService implements PurchaseTicketServiceInterface{
                 newTicket.getValidTo(),
                 TimeUnit.SECONDS
         );
+        notificationCleanerService.cleanNotificationsForParkingSpot(parkingSpotId);
         parkingSchedulerService.schedule(endTicketJob,diff+1,TimeUnit.SECONDS);
     }
 

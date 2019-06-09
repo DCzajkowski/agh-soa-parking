@@ -103,6 +103,8 @@ public class ParkingSpotsRepository implements ParkingSpotsRepositoryInterface {
             } else {
                 targetParkingSpot.setCurrentTicket(null);
             }
+        } else {
+            targetParkingSpot.setCurrentTicket(null);
         }
         if (sourceParkingSpot.isOccupied() != null) {
             targetParkingSpot.setOccupied(sourceParkingSpot.isOccupied());
