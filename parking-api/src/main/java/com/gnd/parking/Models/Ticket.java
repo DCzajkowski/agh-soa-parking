@@ -1,6 +1,6 @@
 package com.gnd.parking.Models;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -16,6 +16,8 @@ public class Ticket implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "parking_spot_id")
+    @JsonBackReference
+    @JsonProperty("parking_spot")
     private ParkingSpot parkingSpot;
 
     @Column(name = "valid_from")
@@ -33,7 +35,6 @@ public class Ticket implements Serializable {
         this.id = id;
     }
 
-    @JsonGetter("parking_spot")
     public ParkingSpot getParkingSpot() {
         return parkingSpot;
     }

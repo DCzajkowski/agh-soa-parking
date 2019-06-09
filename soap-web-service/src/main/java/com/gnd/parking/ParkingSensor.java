@@ -18,22 +18,14 @@ public class ParkingSensor {
     ParkingSpotReleaserServiceInterface parkingSpotReleaser;
 
     @WebMethod
-    public String takeParkingSpot(Integer spotId) {
-        try {
-            parkingSpotTaker.takeParkingSpot(spotId);
-            return "success";
-        } catch (ParkingSpotException e) {
-            return e.getMessage();
-        }
+    public String takeParkingSpot(Integer spotId) throws ParkingSpotException {
+        parkingSpotTaker.takeParkingSpot(spotId);
+        return "success";
     }
 
     @WebMethod
-    public String releaseParkingSpot(Integer spotId) {
-        try {
-            parkingSpotReleaser.releaseParkingSpot(spotId);
-            return "success";
-        } catch (ParkingSpotException e) {
-            return e.getMessage();
-        }
+    public String releaseParkingSpot(Integer spotId) throws ParkingSpotException {
+        parkingSpotReleaser.releaseParkingSpot(spotId);
+        return "success";
     }
 }
