@@ -39,10 +39,19 @@ public class UsersController {
     }
 
     @GET
+    @Secured
     @Path("/{id}")
-    @Secured({Role.ADMIN})
     @Produces(MediaType.APPLICATION_JSON)
     public Response show(@PathParam("id") int id) {
+        if (
+            !securityContext.isUserInRole(Role.ADMIN.toString())
+                && id != ((Token) securityContext.getUserPrincipal()).getId()
+        ) {
+            return Response.status(403)
+                .entity(new ErrorResponse("You are not allowed to edit other users."))
+                .build();
+        }
+
         User user = usersRepository.find(id);
 
         if (user == null) {
