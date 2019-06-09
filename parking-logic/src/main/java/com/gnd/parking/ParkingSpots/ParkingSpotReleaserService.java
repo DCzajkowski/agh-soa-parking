@@ -6,6 +6,7 @@ import com.gnd.parking.Contracts.Services.ParkingSpots.Exceptions.ParkingSpotDoe
 import com.gnd.parking.Contracts.Services.ParkingSpots.Exceptions.ParkingSpotException;
 import com.gnd.parking.Contracts.Services.ParkingSpots.Exceptions.ParkingSpotNotOccupiedException;
 import com.gnd.parking.Contracts.Services.ParkingSpots.ParkingSpotReleaserServiceInterface;
+import com.gnd.parking.Exceptions.NestedObjectNotFoundException;
 import com.gnd.parking.Models.ParkingSpot;
 
 import javax.ejb.EJB;
@@ -36,7 +37,11 @@ public class ParkingSpotReleaserService implements ParkingSpotReleaserServiceInt
 
         spot.setOccupied(false);
         spot.setCurrentTicket(null);
-        parkingSpotsRepository.save(spot);
+        try {
+            parkingSpotsRepository.update(spot);
+        } catch (NestedObjectNotFoundException e) {
+            throw new ParkingSpotException(e.getMessage());
+        }
 
         notificationCleanerService.cleanNotificationsForParkingSpot(spotId);
 

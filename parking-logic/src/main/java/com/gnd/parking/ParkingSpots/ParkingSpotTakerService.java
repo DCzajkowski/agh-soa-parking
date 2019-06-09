@@ -8,6 +8,7 @@ import com.gnd.parking.Contracts.Services.ParkingSpots.Exceptions.ParkingSpotDoe
 import com.gnd.parking.Contracts.Services.ParkingSpots.Exceptions.ParkingSpotException;
 import com.gnd.parking.Contracts.Services.ParkingSpots.ParkingSpotTakerServiceInterface;
 import com.gnd.parking.Contracts.Services.Scheduling.ParkingSchedulerServiceInterface;
+import com.gnd.parking.Exceptions.NestedObjectNotFoundException;
 import com.gnd.parking.Models.ParkingSpot;
 
 import javax.ejb.EJB;
@@ -46,10 +47,14 @@ public class ParkingSpotTakerService implements ParkingSpotTakerServiceInterface
 
         spot.setOccupied(true);
         spot.setLastTimeTakenAt(new Date());
-        parkingSpotsRepository.save(spot);
+        try {
+            parkingSpotsRepository.update(spot);
+        } catch (NestedObjectNotFoundException e) {
+            throw new ParkingSpotException(e.getMessage());
+        }
 
         checkTicketJob.setParkingSpot(spotId);
-        parkingSchedulerService.schedule(checkTicketJob,5, TimeUnit.MINUTES);
+        parkingSchedulerService.schedule(checkTicketJob,5, TimeUnit.SECONDS);
 
         notificationCleanerService.cleanNotificationsForParkingSpot(spotId);
 
