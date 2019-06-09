@@ -74,6 +74,7 @@ public class UsersController {
     }
 
     @PATCH
+    @Secured
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
