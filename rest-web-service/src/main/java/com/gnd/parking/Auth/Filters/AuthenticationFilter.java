@@ -4,6 +4,7 @@ import com.gnd.parking.Auth.Annotations.Secured;
 import com.gnd.parking.Auth.Exceptions.TokenValidationException;
 import com.gnd.parking.Auth.Models.Token;
 import com.gnd.parking.Auth.TokenManager;
+import com.gnd.parking.Responses.ErrorResponse;
 
 import javax.annotation.Priority;
 import javax.inject.Inject;
@@ -71,28 +72,20 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         }
     }
 
-    /**
-     * Check if the Authorization header is valid
-     * It must not be null and must be prefixed with "Bearer" plus a whitespace
-     * The authentication scheme comparison must be case-insensitive
-     */
     private boolean isTokenBasedAuthentication(String authorizationHeader) {
         return authorizationHeader != null
             && authorizationHeader.toLowerCase().startsWith(AUTHENTICATION_SCHEME.toLowerCase() + " ");
     }
 
-    /**
-     * Abort the filter chain with a 401 status code response
-     * The WWW-Authenticate header is sent along with the response
-     */
     private void abortWithUnauthorized(ContainerRequestContext requestContext) {
-        requestContext.abortWith(
-            Response.status(Response.Status.UNAUTHORIZED)
-                .header(
-                    HttpHeaders.WWW_AUTHENTICATE,
-                    String.format("%s realm=\"%s\"", AUTHENTICATION_SCHEME, REALM)
-                )
-                .build()
-        );
+        Response response = Response.status(Response.Status.UNAUTHORIZED)
+            .header(
+                HttpHeaders.WWW_AUTHENTICATE,
+                String.format("%s realm=\"%s\"", AUTHENTICATION_SCHEME, REALM)
+            )
+            .entity(new ErrorResponse("You must be authenticated to access this resource."))
+            .build();
+
+        requestContext.abortWith(response);
     }
 }
