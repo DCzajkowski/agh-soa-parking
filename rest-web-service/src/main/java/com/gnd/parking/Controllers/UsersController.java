@@ -30,14 +30,17 @@ public class UsersController {
     SecurityContext securityContext;
 
     @GET
+    @Secured({Role.ADMIN})
     @Produces(MediaType.APPLICATION_JSON)
     public Response index() {
         List<User> users = usersRepository.all();
+
         return Response.ok(users).build();
     }
 
     @GET
     @Path("/{id}")
+    @Secured({Role.ADMIN})
     @Produces(MediaType.APPLICATION_JSON)
     public Response show(@PathParam("id") int id) {
         User user = usersRepository.find(id);
@@ -50,6 +53,7 @@ public class UsersController {
     }
 
     @POST
+    @Secured({Role.ADMIN})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(User sourceUser) {
@@ -63,6 +67,7 @@ public class UsersController {
 
     @DELETE
     @Path("/{id}")
+    @Secured({Role.ADMIN})
     public Response delete(@PathParam("id") int id) {
         usersRepository.delete(id);
         return Response.ok().build();
