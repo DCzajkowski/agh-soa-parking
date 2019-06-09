@@ -1,7 +1,7 @@
-package com.gnd.parking.Services.ParkingSpots;
+package com.gnd.parking.ParkingSpots;
 
 import com.gnd.parking.Contracts.Repositories.ParkingSpotsRepositoryInterface;
-import com.gnd.parking.Contracts.Services.ParkingSpots.Exceptions.ParkingSpotAlreadyTakenException;
+import com.gnd.parking.Contracts.Services.JMS.NotificationCleanerServiceInterface;
 import com.gnd.parking.Contracts.Services.ParkingSpots.Exceptions.ParkingSpotDoesntExistException;
 import com.gnd.parking.Contracts.Services.ParkingSpots.Exceptions.ParkingSpotException;
 import com.gnd.parking.Contracts.Services.ParkingSpots.Exceptions.ParkingSpotNotOccupiedException;
@@ -16,8 +16,11 @@ import javax.ejb.Singleton;
 @Remote(ParkingSpotReleaserServiceInterface.class)
 public class ParkingSpotReleaserService implements ParkingSpotReleaserServiceInterface {
 
-    @EJB
+    @EJB(lookup = "java:global/parking-implementation-1.0/ParkingSpotsRepository")
     ParkingSpotsRepositoryInterface parkingSpotsRepository;
+
+    @EJB(lookup = "java:global/parking-jms-1.0/NotificationCleanerService")
+    NotificationCleanerServiceInterface notificationCleanerService;
 
     @Override
     public boolean releaseParkingSpot(Integer spotId) throws ParkingSpotException {
@@ -30,9 +33,13 @@ public class ParkingSpotReleaserService implements ParkingSpotReleaserServiceInt
         if (!spot.isOccupied()) {
             throw new ParkingSpotNotOccupiedException();
         }
+
         spot.setOccupied(false);
-        //TODO Perform actions when car leaves parkingSpot
+        spot.setCurrentTicket(null);
         parkingSpotsRepository.save(spot);
+
+        notificationCleanerService.cleanNotificationsForParkingSpot(spotId);
+
         return true;
     }
 
