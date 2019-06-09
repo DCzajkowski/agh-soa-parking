@@ -117,7 +117,10 @@ public class UsersController {
 
             boolean successfulPasswordChange;
 
-            if (securityContext.isUserInRole(Role.ADMIN.toString())) {
+            if (
+                securityContext.isUserInRole(Role.ADMIN.toString())
+                    && ((Token) securityContext.getUserPrincipal()).getId() != id
+            ) {
                 successfulPasswordChange = authenticatorService.changePassword(
                     targetUser,
                     userRequest.getNewPassword()
