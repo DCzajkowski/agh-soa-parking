@@ -54,7 +54,7 @@ public class ParkingSpotTakerService implements ParkingSpotTakerServiceInterface
         }
 
         checkTicketJob.setParkingSpot(spotId);
-        parkingSchedulerService.schedule(checkTicketJob,10, TimeUnit.SECONDS);
+        parkingSchedulerService.schedule(checkTicketJob,61, TimeUnit.SECONDS);
 
         notificationCleanerService.cleanNotificationsForParkingSpot(spotId);
 

@@ -2,21 +2,25 @@ package com.gnd.parking.Jobs;
 
 import com.gnd.parking.Contracts.Jobs.CheckTicketJobInterface;
 import com.gnd.parking.Contracts.Repositories.ParkingSpotsRepositoryInterface;
+import com.gnd.parking.Contracts.Services.JMS.NotificationSenderServiceInterface;
 import com.gnd.parking.Models.ParkingSpot;
 
 import javax.ejb.EJB;
 import javax.ejb.Remote;
 import javax.ejb.Stateful;
-import javax.ejb.Stateless;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 @Stateful
 @Remote(CheckTicketJobInterface.class)
 public class CheckTicketJob implements CheckTicketJobInterface{
+    private final long WAITING_TIME_SECONDS = 60;
 
     @EJB(lookup = "java:global/parking-implementation-1.0/ParkingSpotsRepository")
     ParkingSpotsRepositoryInterface parkingSpotsRepository;
+
+    @EJB(lookup = "java:global/parking-jms-1.0/NotificationSenderService")
+    NotificationSenderServiceInterface notificationSenderService;
 
     private Integer parkingSpotId;
 
@@ -31,8 +35,18 @@ public class CheckTicketJob implements CheckTicketJobInterface{
         if (parkingSpot == null) { return; }
 
         if (shouldHaveTicket(parkingSpot) && !hasTicket(parkingSpot)){
-            System.out.println("should have ticket");
+            sendNotification(parkingSpot);
         }
+    }
+
+    private void sendNotification(ParkingSpot parkingSpot){
+        String message = "Parking place with id "+parkingSpot.getId()+" doesn't have valid ticket" ;
+
+        notificationSenderService.sendNotification(
+                message,
+                parkingSpot.getId(),
+                parkingSpot.getRegion().getId()
+        );
     }
 
     private Boolean shouldHaveTicket(ParkingSpot parkingSpot) {
@@ -42,7 +56,7 @@ public class CheckTicketJob implements CheckTicketJobInterface{
     private Boolean waitingForTicketPeriodPassed(ParkingSpot parkingSpot){
         Date takenAt = parkingSpot.getLastTimeTakenAt();
         Date now = new Date();
-        return getDateDiff(takenAt, now, TimeUnit.SECONDS) >= 10;
+        return getDateDiff(takenAt, now, TimeUnit.SECONDS) >= WAITING_TIME_SECONDS;
     }
 
     private Boolean hasTicket(ParkingSpot parkingSpot) {

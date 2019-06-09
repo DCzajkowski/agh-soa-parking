@@ -2,18 +2,25 @@ package com.gnd.parking.Controllers;
 
 import com.gnd.parking.Auth.Annotations.Secured;
 import com.gnd.parking.Auth.Models.Token;
+import com.gnd.parking.Contracts.Services.JMS.NotificationReceiverServiceInterface;
 import com.gnd.parking.Models.Role;
 
+import javax.ejb.EJB;
+import javax.jms.JMSException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.util.List;
 
 @Path("notifications")
 public class NotificationsController {
     @Context
     SecurityContext securityContext;
+
+    @EJB(lookup = "java:global/parking-jms-1.0/NotificationReceiverService")
+    NotificationReceiverServiceInterface notificationReceiverService;
 
     @GET
     @Secured({Role.EMPLOYEE})
@@ -22,11 +29,14 @@ public class NotificationsController {
     public Response get() {
         Token user = ((Token) securityContext.getUserPrincipal());
 
-        int userId = user.getId();
         int regionId = user.getRegionId();
 
-        System.out.println(String.format("user id: %s; region id: %s", userId, regionId));
-
-        return Response.ok().build();
+        try {
+            List<String> notifications = notificationReceiverService
+                    .receiveNotificationsForRegion(regionId);
+            return Response.ok(notifications).build();
+        } catch (JMSException e) {
+            return Response.status(500).build();
+        }
     }
 }
