@@ -99,6 +99,9 @@ public class ParkingSpotsRepository implements ParkingSpotsRepositoryInterface {
         if (sourceParkingSpot.isOccupied() != null) {
             targetParkingSpot.setOccupied(sourceParkingSpot.isOccupied());
         }
+        if (sourceParkingSpot.getLastTimeTakenAt() != null) {
+            targetParkingSpot.setLastTimeTakenAt(sourceParkingSpot.getLastTimeTakenAt());
+        }
         return targetParkingSpot;
     }
 }
