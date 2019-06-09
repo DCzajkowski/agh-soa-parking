@@ -2,10 +2,12 @@ package com.gnd.parking.Repositories;
 
 import com.gnd.parking.Contracts.Repositories.ParkingSpotsRepositoryInterface;
 import com.gnd.parking.Contracts.Repositories.RegionsRepositoryInterface;
+import com.gnd.parking.Contracts.Repositories.TicketsRepositoryInterface;
 import com.gnd.parking.EntityManagers.ParkingEntityManager;
 import com.gnd.parking.Exceptions.NestedObjectNotFoundException;
 import com.gnd.parking.Models.ParkingSpot;
 import com.gnd.parking.Models.Region;
+import com.gnd.parking.Models.Ticket;
 
 import javax.ejb.EJB;
 import javax.ejb.Remote;
@@ -20,6 +22,9 @@ public class ParkingSpotsRepository implements ParkingSpotsRepositoryInterface {
 
     @EJB
     private RegionsRepositoryInterface regionsRepository;
+
+    @EJB
+    private TicketsRepositoryInterface ticketsRepository;
 
     @Override
     public List<ParkingSpot> all() {
@@ -87,8 +92,23 @@ public class ParkingSpotsRepository implements ParkingSpotsRepositoryInterface {
                 targetParkingSpot.setRegion(null);
             }
         }
+        if (sourceParkingSpot.getCurrentTicket() != null) {
+            Integer currentTicketId = sourceParkingSpot.getCurrentTicket().getId();
+            if (currentTicketId != 0) {
+                Ticket newCurrentTicket = ticketsRepository.find(currentTicketId);
+                if (newCurrentTicket == null) {
+                    throw new NestedObjectNotFoundException("Ticket not found");
+                }
+                targetParkingSpot.setCurrentTicket(newCurrentTicket);
+            } else {
+                targetParkingSpot.setCurrentTicket(null);
+            }
+        }
         if (sourceParkingSpot.isOccupied() != null) {
             targetParkingSpot.setOccupied(sourceParkingSpot.isOccupied());
+        }
+        if (sourceParkingSpot.getLastTimeTakenAt() != null) {
+            targetParkingSpot.setLastTimeTakenAt(sourceParkingSpot.getLastTimeTakenAt());
         }
         return targetParkingSpot;
     }
