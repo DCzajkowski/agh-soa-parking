@@ -1,19 +1,26 @@
 package com.gnd.parking.Controllers;
 
 import com.gnd.parking.Contracts.Repositories.TicketsRepositoryInterface;
+import com.gnd.parking.Contracts.Services.Tickets.PurchaseTicketServiceInterface;
+import com.gnd.parking.Contracts.Services.Tickets.Exceptions.TicketPurchaseException;
 import com.gnd.parking.Exceptions.NestedObjectNotFoundException;
 import com.gnd.parking.Models.Ticket;
+import com.gnd.parking.Requests.PurchaseTicketRequest;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Date;
 import java.util.List;
 
 @Path("tickets")
 public class TicketsController {
     @EJB(lookup = "java:global/parking-implementation-1.0/TicketsRepository")
     TicketsRepositoryInterface ticketsRepository;
+
+    @EJB(lookup = "java:global/parking-logic-1.0/PurchaseTicketService")
+    PurchaseTicketServiceInterface purchaseTicketService;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -33,6 +40,18 @@ public class TicketsController {
         }
 
         return Response.ok(ticket).build();
+    }
+
+    @POST
+    @Path("/buy")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response buy(PurchaseTicketRequest ticketRequest) {
+        try {
+            purchaseTicketService.purchaseTicket(ticketRequest.getValidTo(), ticketRequest.getParkingSpotId());
+            return Response.ok().build();
+        } catch (TicketPurchaseException e) {
+            return Response.status(400).entity(e.getMessage()).build();
+        }
     }
 
     @POST
