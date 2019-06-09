@@ -42,7 +42,7 @@ public class CheckTicketJob implements CheckTicketJobInterface{
     private Boolean waitingForTicketPeriodPassed(ParkingSpot parkingSpot){
         Date takenAt = parkingSpot.getLastTimeTakenAt();
         Date now = new Date();
-        return getDateDiff(now, takenAt, TimeUnit.SECONDS) >= 5;
+        return getDateDiff(takenAt, now, TimeUnit.SECONDS) >= 10;
     }
 
     private Boolean hasTicket(ParkingSpot parkingSpot) {
