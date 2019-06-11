@@ -6,16 +6,18 @@ import javax.annotation.Resource;
 import javax.ejb.Remote;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
-import javax.jms.*;
+import javax.jms.JMSContext;
+import javax.jms.JMSProducer;
+import javax.jms.Queue;
 
 @Singleton
 @Remote(NotificationSenderServiceInterface.class)
-public class NotificationSenderService implements NotificationSenderServiceInterface{
+public class NotificationSenderService implements NotificationSenderServiceInterface {
 
     @Inject
     JMSContext context;
 
-    @Resource(lookup="java:/jms/queue/SOA_Parking")
+    @Resource(lookup = "java:/jms/queue/SOA_Parking")
     Queue queue;
 
     @Override

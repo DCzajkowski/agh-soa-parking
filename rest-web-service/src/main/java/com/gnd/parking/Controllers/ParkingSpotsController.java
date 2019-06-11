@@ -58,6 +58,7 @@ public class ParkingSpotsController {
     }
 
     @POST
+    @Secured({Role.ADMIN})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(ParkingSpot sourceParkingSpot) {
@@ -71,6 +72,7 @@ public class ParkingSpotsController {
 
     @DELETE
     @Path("/{id}")
+    @Secured({Role.ADMIN})
     public Response delete(@PathParam("id") int id) {
         parkingSpotsRepository.delete(id);
         return Response.ok().build();
@@ -78,6 +80,7 @@ public class ParkingSpotsController {
 
     @PATCH
     @Path("/{id}")
+    @Secured({Role.ADMIN})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") int id, ParkingSpot sourceParkingSpot) {

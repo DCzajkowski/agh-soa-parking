@@ -1,7 +1,9 @@
 package com.gnd.parking.Controllers;
 
+import com.gnd.parking.Auth.Annotations.Secured;
 import com.gnd.parking.Contracts.Repositories.RegionsRepositoryInterface;
 import com.gnd.parking.Models.Region;
+import com.gnd.parking.Models.Role;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -36,6 +38,7 @@ public class RegionsController {
     }
 
     @POST
+    @Secured({Role.ADMIN})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(Region sourceRegion) {
@@ -45,6 +48,7 @@ public class RegionsController {
 
     @DELETE
     @Path("/{id}")
+    @Secured({Role.ADMIN})
     public Response delete(@PathParam("id") int id) {
         regionsRepository.delete(id);
         return Response.ok().build();
@@ -52,6 +56,7 @@ public class RegionsController {
 
     @PATCH
     @Path("/{id}")
+    @Secured({Role.ADMIN})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") int id, Region sourceRegion) {

@@ -22,8 +22,8 @@ import java.util.Date;
 @ApplicationScoped
 public class TokenManager {
     final private static String key = "55624f1dd08d1dc71fa2609c79111337";
-    private static final String ISSUER = "royal-parking.com";
-    private static final int EXPIRATION_TIME = 1000 * 60 * 60 * 24;
+    final private static String ISSUER = "royal-parking.com";
+    final private static int EXPIRATION_TIME = 1000 * 60 * 60 * 24;
     final private MACSigner signer;
 
     public TokenManager() throws KeyLengthException {

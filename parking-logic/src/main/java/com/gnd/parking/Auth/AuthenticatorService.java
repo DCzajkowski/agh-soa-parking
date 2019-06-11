@@ -1,4 +1,4 @@
-package com.gnd.parking.Services.Auth;
+package com.gnd.parking.Auth;
 
 import com.gnd.parking.Contracts.Repositories.UsersRepositoryInterface;
 import com.gnd.parking.Contracts.Services.Auth.AuthenticatorServiceInterface;

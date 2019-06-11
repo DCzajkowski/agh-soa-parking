@@ -1,8 +1,6 @@
 package com.gnd.parking;
 
 import com.gnd.parking.Contracts.Services.JMS.NotificationReceiverServiceInterface;
-import com.gnd.parking.Models.Region;
-import com.gnd.parking.Models.User;
 
 import javax.annotation.Resource;
 import javax.ejb.Remote;
@@ -14,12 +12,12 @@ import java.util.List;
 
 @Singleton
 @Remote(NotificationReceiverServiceInterface.class)
-public class NotificationReceiverService implements NotificationReceiverServiceInterface{
+public class NotificationReceiverService implements NotificationReceiverServiceInterface {
 
     @Inject
     JMSContext context;
 
-    @Resource(lookup="java:/jms/queue/SOA_Parking")
+    @Resource(lookup = "java:/jms/queue/SOA_Parking")
     Queue queue;
 
     @Override
