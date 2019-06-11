@@ -21,7 +21,7 @@ public class LoginController {
     @EJB(lookup = "java:global/parking-implementation-1.0/UsersRepository")
     UsersRepositoryInterface usersRepository;
 
-    @EJB(lookup = "java:global/parking-implementation-1.0/AuthenticatorService")
+    @EJB(lookup = "java:global/parking-logic-1.0/AuthenticatorService")
     AuthenticatorServiceInterface authenticatorService;
 
     @Inject
