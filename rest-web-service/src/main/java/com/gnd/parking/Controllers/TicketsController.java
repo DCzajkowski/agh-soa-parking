@@ -13,6 +13,7 @@ import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Date;
 import java.util.List;
 
 @Path("tickets")
@@ -24,10 +25,13 @@ public class TicketsController {
     PurchaseTicketServiceInterface purchaseTicketService;
 
     @GET
-    @Secured({Role.PARKING_METER})
+    @Secured({Role.PARKING_METER,Role.EMPLOYEE,Role.ADMIN})
     @Produces(MediaType.APPLICATION_JSON)
-    public Response index() {
-        List<Ticket> tickets = ticketsRepository.all();
+    public Response index(@QueryParam("valid_to_after") Long validToAfter) {
+        List<Ticket> tickets = (validToAfter == null)
+            ? ticketsRepository.all()
+            : ticketsRepository.allWhere("valid_to", ">", new Date(validToAfter));
+
         return Response.ok(tickets).build();
     }
 

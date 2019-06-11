@@ -17,4 +17,6 @@ public interface TicketsRepositoryInterface {
     Ticket create(Ticket sourceTicket) throws NestedObjectNotFoundException;
 
     Ticket save(Ticket ticket);
+
+    List<Ticket> allWhere(String field, String operator, Object value);
 }

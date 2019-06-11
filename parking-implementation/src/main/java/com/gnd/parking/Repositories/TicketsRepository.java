@@ -52,6 +52,14 @@ public class TicketsRepository implements TicketsRepositoryInterface {
     }
 
     @Override
+    public List<Ticket> allWhere(String field, String operator, Object value) {
+        return em.get()
+            .createQuery(String.format("SELECT t FROM Ticket t WHERE %s %s :value", field, operator))
+            .setParameter("value", value)
+            .getResultList();
+    }
+
+    @Override
     public Ticket create(Ticket sourceTicket) throws NestedObjectNotFoundException {
         Ticket targetTicket = new Ticket();
         clone(targetTicket, sourceTicket);
