@@ -10,6 +10,7 @@ import com.gnd.parking.Models.Ticket;
 import javax.ejb.EJB;
 import javax.ejb.Remote;
 import javax.ejb.Singleton;
+import java.util.Date;
 import java.util.List;
 
 @Singleton
@@ -52,10 +53,10 @@ public class TicketsRepository implements TicketsRepositoryInterface {
     }
 
     @Override
-    public List<Ticket> allWhere(String field, String operator, Object value) {
+    public List<Ticket> allValidWithinLastXMinutes(Date date) {
         return em.get()
-            .createQuery(String.format("SELECT t FROM Ticket t WHERE %s %s :value", field, operator))
-            .setParameter("value", value)
+            .createQuery("SELECT t FROM Ticket t WHERE t.validTo > :valid_to_after AND t.validTo < CURRENT_TIMESTAMP")
+            .setParameter("valid_to_after", date)
             .getResultList();
     }
 

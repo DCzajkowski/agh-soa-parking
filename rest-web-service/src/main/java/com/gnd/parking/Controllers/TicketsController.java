@@ -11,8 +11,10 @@ import com.gnd.parking.Requests.PurchaseTicketRequest;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.util.Date;
 import java.util.List;
 
@@ -24,13 +26,16 @@ public class TicketsController {
     @EJB(lookup = "java:global/parking-logic-1.0/PurchaseTicketService")
     PurchaseTicketServiceInterface purchaseTicketService;
 
+    @Context
+    SecurityContext securityContext;
+
     @GET
     @Secured({Role.PARKING_METER,Role.EMPLOYEE,Role.ADMIN})
     @Produces(MediaType.APPLICATION_JSON)
     public Response index(@QueryParam("valid_to_after") Long validToAfter) {
         List<Ticket> tickets = (validToAfter == null)
             ? ticketsRepository.all()
-            : ticketsRepository.allWhere("valid_to", ">", new Date(validToAfter));
+            : ticketsRepository.allValidWithinLastXMinutes(new Date(validToAfter));
 
         return Response.ok(tickets).build();
     }

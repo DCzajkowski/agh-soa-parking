@@ -3,6 +3,7 @@ package com.gnd.parking.Contracts.Repositories;
 import com.gnd.parking.Exceptions.NestedObjectNotFoundException;
 import com.gnd.parking.Models.Ticket;
 
+import java.util.Date;
 import java.util.List;
 
 public interface TicketsRepositoryInterface {
@@ -14,9 +15,9 @@ public interface TicketsRepositoryInterface {
 
     Ticket update(Ticket sourceTicket) throws NestedObjectNotFoundException;
 
+    List<Ticket> allValidWithinLastXMinutes(Date date);
+
     Ticket create(Ticket sourceTicket) throws NestedObjectNotFoundException;
 
     Ticket save(Ticket ticket);
-
-    List<Ticket> allWhere(String field, String operator, Object value);
 }
