@@ -13,8 +13,8 @@ import java.util.concurrent.TimeUnit;
 
 @Stateful
 @Remote(CheckTicketJobInterface.class)
-public class CheckTicketJob implements CheckTicketJobInterface{
-    private final long WAITING_TIME_SECONDS = 60;
+public class CheckTicketJob implements CheckTicketJobInterface {
+    final private static long WAITING_TIME_SECONDS = 60;
 
     @EJB(lookup = "java:global/parking-implementation-1.0/ParkingSpotsRepository")
     ParkingSpotsRepositoryInterface parkingSpotsRepository;
@@ -32,20 +32,22 @@ public class CheckTicketJob implements CheckTicketJobInterface{
     @Override
     public void run() {
         ParkingSpot parkingSpot = parkingSpotsRepository.find(this.parkingSpotId);
-        if (parkingSpot == null) { return; }
+        if (parkingSpot == null) {
+            return;
+        }
 
-        if (shouldHaveTicket(parkingSpot) && !hasTicket(parkingSpot)){
+        if (shouldHaveTicket(parkingSpot) && !hasTicket(parkingSpot)) {
             sendNotification(parkingSpot);
         }
     }
 
-    private void sendNotification(ParkingSpot parkingSpot){
-        String message = "Parking place with id "+parkingSpot.getId()+" doesn't have valid ticket" ;
+    private void sendNotification(ParkingSpot parkingSpot) {
+        String message = "Parking place with id " + parkingSpot.getId() + " doesn't have valid ticket";
 
         notificationSenderService.sendNotification(
-                message,
-                parkingSpot.getId(),
-                parkingSpot.getRegion().getId()
+            message,
+            parkingSpot.getId(),
+            parkingSpot.getRegion().getId()
         );
     }
 
@@ -53,7 +55,7 @@ public class CheckTicketJob implements CheckTicketJobInterface{
         return parkingSpot.isOccupied() && waitingForTicketPeriodPassed(parkingSpot);
     }
 
-    private Boolean waitingForTicketPeriodPassed(ParkingSpot parkingSpot){
+    private Boolean waitingForTicketPeriodPassed(ParkingSpot parkingSpot) {
         Date takenAt = parkingSpot.getLastTimeTakenAt();
         Date now = new Date();
         return getDateDiff(takenAt, now, TimeUnit.SECONDS) >= WAITING_TIME_SECONDS;
@@ -64,7 +66,7 @@ public class CheckTicketJob implements CheckTicketJobInterface{
     }
 
     private long getDateDiff(Date date1, Date date2, TimeUnit timeUnit) {
-        long diffInMillies = date2.getTime() - date1.getTime();
-        return timeUnit.convert(diffInMillies,TimeUnit.MILLISECONDS);
+        long diffInMillis = date2.getTime() - date1.getTime();
+        return timeUnit.convert(diffInMillis, TimeUnit.MILLISECONDS);
     }
 }

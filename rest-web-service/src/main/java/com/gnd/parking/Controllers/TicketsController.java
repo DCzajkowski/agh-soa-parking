@@ -1,9 +1,11 @@
 package com.gnd.parking.Controllers;
 
+import com.gnd.parking.Auth.Annotations.Secured;
 import com.gnd.parking.Contracts.Repositories.TicketsRepositoryInterface;
-import com.gnd.parking.Contracts.Services.Tickets.PurchaseTicketServiceInterface;
 import com.gnd.parking.Contracts.Services.Tickets.Exceptions.TicketPurchaseException;
+import com.gnd.parking.Contracts.Services.Tickets.PurchaseTicketServiceInterface;
 import com.gnd.parking.Exceptions.NestedObjectNotFoundException;
+import com.gnd.parking.Models.Role;
 import com.gnd.parking.Models.Ticket;
 import com.gnd.parking.Requests.PurchaseTicketRequest;
 
@@ -11,7 +13,6 @@ import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Date;
 import java.util.List;
 
 @Path("tickets")
@@ -23,6 +24,7 @@ public class TicketsController {
     PurchaseTicketServiceInterface purchaseTicketService;
 
     @GET
+    @Secured({Role.PARKING_METER})
     @Produces(MediaType.APPLICATION_JSON)
     public Response index() {
         List<Ticket> tickets = ticketsRepository.all();
@@ -31,6 +33,7 @@ public class TicketsController {
 
     @GET
     @Path("/{id}")
+    @Secured({Role.PARKING_METER})
     @Produces(MediaType.APPLICATION_JSON)
     public Response show(@PathParam("id") int id) {
         Ticket ticket = ticketsRepository.find(id);
@@ -44,6 +47,7 @@ public class TicketsController {
 
     @POST
     @Path("/buy")
+    @Secured({Role.PARKING_METER})
     @Consumes(MediaType.APPLICATION_JSON)
     public Response buy(PurchaseTicketRequest ticketRequest) {
         try {
@@ -55,6 +59,7 @@ public class TicketsController {
     }
 
     @POST
+    @Secured({Role.PARKING_METER})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(Ticket sourceTicket) {
@@ -68,6 +73,7 @@ public class TicketsController {
 
     @DELETE
     @Path("/{id}")
+    @Secured({Role.PARKING_METER})
     public Response delete(@PathParam("id") int id) {
         ticketsRepository.delete(id);
         return Response.ok().build();
@@ -75,6 +81,7 @@ public class TicketsController {
 
     @PATCH
     @Path("/{id}")
+    @Secured({Role.PARKING_METER})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") int id, Ticket sourceTicket) {

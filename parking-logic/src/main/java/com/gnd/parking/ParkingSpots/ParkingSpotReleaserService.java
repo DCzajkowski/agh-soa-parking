@@ -37,6 +37,7 @@ public class ParkingSpotReleaserService implements ParkingSpotReleaserServiceInt
 
         spot.setOccupied(false);
         spot.setCurrentTicket(null);
+
         try {
             parkingSpotsRepository.update(spot);
         } catch (NestedObjectNotFoundException e) {

@@ -6,8 +6,10 @@ import javax.annotation.Resource;
 import javax.ejb.Remote;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
-import javax.jms.*;
-
+import javax.jms.JMSConsumer;
+import javax.jms.JMSContext;
+import javax.jms.Message;
+import javax.jms.Queue;
 
 @Singleton
 @Remote(NotificationCleanerServiceInterface.class)
@@ -15,7 +17,7 @@ public class NotificationCleanerService implements NotificationCleanerServiceInt
     @Inject
     JMSContext context;
 
-    @Resource(lookup="java:/jms/queue/SOA_Parking")
+    @Resource(lookup = "java:/jms/queue/SOA_Parking")
     Queue queue;
 
     @Override
@@ -23,6 +25,8 @@ public class NotificationCleanerService implements NotificationCleanerServiceInt
         JMSConsumer consumer = context.createConsumer(queue, "parkingSpotId =" + parkingSpotId);
 
         Message message;
-        while ((message = consumer.receiveNoWait()) != null){}
+        while ((message = consumer.receiveNoWait()) != null) {
+            //
+        }
     }
 }

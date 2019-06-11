@@ -47,6 +47,7 @@ public class ParkingSpotTakerService implements ParkingSpotTakerServiceInterface
 
         spot.setOccupied(true);
         spot.setLastTimeTakenAt(new Date());
+
         try {
             parkingSpotsRepository.update(spot);
         } catch (NestedObjectNotFoundException e) {

@@ -14,7 +14,7 @@ import javax.ejb.Stateful;
 
 @Stateful
 @Remote(EndTicketJobInterface.class)
-public class EndTicketJob implements EndTicketJobInterface{
+public class EndTicketJob implements EndTicketJobInterface {
 
     @EJB(lookup = "java:global/parking-implementation-1.0/TicketsRepository")
     TicketsRepositoryInterface ticketsRepository;
@@ -35,32 +35,44 @@ public class EndTicketJob implements EndTicketJobInterface{
     @Override
     public void run() {
         Ticket ticket = ticketsRepository.find(this.ticketId);
+
+        if (ticket == null) {
+            return;
+        }
+
         ParkingSpot parkingSpot = ticket.getParkingSpot();
-        if (ticket == null) { return; }
-        if (parkingSpot == null) { return; }
+
+        if (parkingSpot == null) {
+            return;
+        }
+
         parkingSpot = parkingSpotsRepository.find(parkingSpot.getId());
-        if (parkingSpot.getCurrentTicket() == null) { return; }
-        if (parkingSpot.getCurrentTicket().getId() != ticketId) {return;}
+
+        if (
+            parkingSpot.getCurrentTicket() == null
+                || parkingSpot.getCurrentTicket().getId() != ticketId
+        ) {
+            return;
+        }
 
         parkingSpot.setCurrentTicket(null);
+
         try {
             parkingSpotsRepository.update(parkingSpot);
         } catch (NestedObjectNotFoundException e) {
             e.printStackTrace();
         }
 
-        if (parkingSpot.isOccupied()){
+        if (parkingSpot.isOccupied()) {
             sendNotification(parkingSpot);
         }
     }
 
-    private void sendNotification(ParkingSpot parkingSpot){
-        String message = "Parking place with id "+parkingSpot.getId()+" doesn't have valid ticket" ;
-
+    private void sendNotification(ParkingSpot parkingSpot) {
         notificationSenderService.sendNotification(
-                message,
-                parkingSpot.getId(),
-                parkingSpot.getRegion().getId()
+            "Parking place with id " + parkingSpot.getId() + " doesn't have valid ticket",
+            parkingSpot.getId(),
+            parkingSpot.getRegion().getId()
         );
     }
 }

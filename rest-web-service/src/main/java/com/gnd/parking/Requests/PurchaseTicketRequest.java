@@ -31,5 +31,4 @@ public class PurchaseTicketRequest implements PurchaseTicketRequestInterface {
     public void setValidTo(Date validTo) {
         this.validTo = validTo;
     }
-
 }

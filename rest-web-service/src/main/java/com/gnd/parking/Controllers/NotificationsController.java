@@ -7,7 +7,10 @@ import com.gnd.parking.Models.Role;
 
 import javax.ejb.EJB;
 import javax.jms.JMSException;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -33,7 +36,8 @@ public class NotificationsController {
 
         try {
             List<String> notifications = notificationReceiverService
-                    .receiveNotificationsForRegion(regionId);
+                .receiveNotificationsForRegion(regionId);
+
             return Response.ok(notifications).build();
         } catch (JMSException e) {
             return Response.status(500).build();
