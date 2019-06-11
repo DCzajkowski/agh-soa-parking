@@ -13,7 +13,7 @@ import javax.ejb.Singleton;
 @Singleton
 @Remote(AuthenticatorServiceInterface.class)
 public class AuthenticatorService implements AuthenticatorServiceInterface {
-    @EJB
+    @EJB(lookup = "java:global/parking-implementation-1.0/UsersRepository")
     UsersRepositoryInterface usersRepository;
 
     @Override
