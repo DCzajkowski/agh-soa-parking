@@ -16,7 +16,7 @@ import java.util.List;
 @Remote(TicketsRepositoryInterface.class)
 public class TicketsRepository implements TicketsRepositoryInterface {
     @EJB
-    ParkingEntityManager em;
+    private ParkingEntityManager em;
 
     @EJB
     private ParkingSpotsRepositoryInterface parkingSpotsRepository;

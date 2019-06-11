@@ -13,7 +13,7 @@ import java.util.List;
 @Remote(RegionsRepositoryInterface.class)
 public class RegionsRepository implements RegionsRepositoryInterface {
     @EJB
-    ParkingEntityManager em;
+    private ParkingEntityManager em;
 
     @Override
     public List<Region> all() {
