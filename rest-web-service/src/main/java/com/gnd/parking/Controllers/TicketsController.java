@@ -1,6 +1,7 @@
 package com.gnd.parking.Controllers;
 
 import com.gnd.parking.Auth.Annotations.Secured;
+import com.gnd.parking.Auth.Models.Token;
 import com.gnd.parking.Contracts.Repositories.TicketsRepositoryInterface;
 import com.gnd.parking.Contracts.Services.Tickets.Exceptions.TicketPurchaseException;
 import com.gnd.parking.Contracts.Services.Tickets.PurchaseTicketServiceInterface;
@@ -17,6 +18,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("tickets")
 public class TicketsController {
@@ -36,6 +38,12 @@ public class TicketsController {
         List<Ticket> tickets = (validToAfter == null)
             ? ticketsRepository.all()
             : ticketsRepository.allValidWithinLastXMinutes(new Date(validToAfter));
+
+        if (securityContext.isUserInRole(Role.EMPLOYEE.toString())) {
+            tickets = tickets.stream()
+                .filter(ticket -> ticket.getParkingSpot().getRegion().getId() == ((Token) securityContext.getUserPrincipal()).getRegionId())
+                .collect(Collectors.toList());
+        }
 
         return Response.ok(tickets).build();
     }
