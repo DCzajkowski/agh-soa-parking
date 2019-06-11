@@ -21,6 +21,8 @@ import java.util.concurrent.TimeUnit;
 @Remote(PurchaseTicketServiceInterface.class)
 public class PurchaseTicketService implements PurchaseTicketServiceInterface {
 
+    static final long ONE_MINUTE_IN_MILLIS=60000;
+
     @EJB(lookup = "java:global/parking-implementation-1.0/ParkingSpotsRepository")
     ParkingSpotsRepositoryInterface parkingSpotsRepository;
 
@@ -79,8 +81,8 @@ public class PurchaseTicketService implements PurchaseTicketServiceInterface {
         if (validTo == null) {
             throw new TicketPurchaseException("valid_to has to be present");
         }
-        if (validTo.compareTo(validFrom) <= 0) {
-            throw new TicketPurchaseException("valid_to has to be in the future");
+        if (validTo.compareTo(new Date(validFrom.getTime() + 5 * ONE_MINUTE_IN_MILLIS)) <= 0) {
+            throw new TicketPurchaseException("valid_to has to be at least 5 min from now in the future");
         }
     }
 
